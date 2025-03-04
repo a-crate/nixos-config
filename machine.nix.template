@@ -1,0 +1,10 @@
+{
+  hostName = "";
+  # Generate with something like head -c 8 /etc/machine-id
+  hostId = "";
+  # amd, nvidia, intel
+  gpu = [""];
+  cpu = "";
+  laptop = false;
+  desktop = !builtins.this.laptop;
+}
