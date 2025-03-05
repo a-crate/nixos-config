@@ -1,21 +1,7 @@
-branch ?= main
-
 all: result
 
-result: build/configuration.nix build/hardware-configuration.nix build/machine.nix
+result:
 	nix-build '<nixpkgs/nixos>' -A config.system.build.toplevel -I nixos-config=./configuration.nix
-
-build/configuration.nix:
-	mkdir -p build
-	ln -s ../configuration.nix build/configuration.nix
-
-build/hardware-configuration.nix:
-	mkdir -p build
-	ln -s ../hardware-configuration.nix build/hardware-configuration.nix
-
-build/machine.nix:
-	mkdir -p build
-	ln -s ../machine.nix build/machine.nix
 
 # Link hardware-configuration.nix and machine.nix to system files for building
 local-links: local-hardware-configuration.nix local-machine.nix
