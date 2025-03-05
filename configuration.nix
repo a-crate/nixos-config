@@ -143,6 +143,7 @@ in
     wget
     curl
     lact
+    gnumake
   ];
 
   fonts.packages = with pkgs; [
