@@ -110,6 +110,8 @@ in
     packages = with pkgs; [
       onlyoffice-bin
       sway
+      git
+      gh
       swaybg
       alacritty
       swayidle
