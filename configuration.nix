@@ -8,6 +8,7 @@ let
   haveNvidiaGPU = builtins.elem "nvidia" machine.gpu;
   haveIntelGPU = builtins.elem "intel" machine.gpu;
   haveAMDGPU = builtins.elem "amd" machine.gpu;
+  haveDGPU = haveNvidiaGPU || haveIntelGPU;
   gpuDrivers = []
     ++(if haveAMDGPU then [ "amdgpu" ] else [])
     ++(if haveIntelGPU then [ "i915" ] else [])
@@ -34,13 +35,13 @@ in
 
   services = {
     ollama = {
-      enable = haveAMDGPU || haveNvidiaGPU;
-      acceleration = if haveAMDGPU then "rocm" else if haveNvidiaGPU then "cuda" else {};
+      enable = haveDGPU;
+      acceleration = if haveAMDGPU then "rocm" else if haveNvidiaGPU then "cuda" else false;
       # nix-run -p rocmPackages.rocminfo rocminfo | grep gfx
       # run on gfx1031, or 10.3.1
       # hardcoded to my 6700 right now...
-      environmentVariables.HCC_AMDGPU_TARGET = if haveAMDGPU then "gfx1031" else {};
-      rocmOverrideGfx = if haveAMDGPU then "10.3.1" else {};
+      environmentVariables.HCC_AMDGPU_TARGET = if haveAMDGPU then "gfx1031" else "";
+      rocmOverrideGfx = if haveAMDGPU then "10.3.1" else "";
     };
     greetd = {
       enable = true;
@@ -58,16 +59,16 @@ in
     xserver.videoDrivers = gpuDrivers;
   };
 
-  systemd.packages = if haveAMDGPU then [ pkgs.lact ] else {};
-  systemd.services.lactd.wantedBy = if haveAMDGPU then ["multi-user.target"] else {};
+  systemd.packages = if haveAMDGPU then [ pkgs.lact ] else [];
+  systemd.services.lactd.wantedBy = if haveAMDGPU then ["multi-user.target"] else [];
 
 
   hardware = {
     graphics = {
       enable = true;
       enable32Bit = true;
-      extraPackages = if haveAMDGPU then [ pkgs.amdvlk ] else {};
-      extraPackages32 = if haveAMDGPU then [ pkgs.driversi686Linux.amdvlk ] else {};
+      extraPackages = if haveAMDGPU then [ pkgs.amdvlk ] else [];
+      extraPackages32 = if haveAMDGPU then [ pkgs.driversi686Linux.amdvlk ] else [];
     };
     pulseaudio = {
       package = pkgs.pulseaudioFull;
@@ -83,7 +84,7 @@ in
   };
   virtualisation.libvirtd.enable = true;
   programs = {
-    gamemode.enable = true;
+    gamemode.enable = haveDGPU;
     virt-manager.enable = true;
     light.enable = true;
     fish.enable = true;
@@ -94,9 +95,9 @@ in
     xfconf.enable = true;
     sway.enable = true;
     steam = {
-      enable = true;
-      remotePlay.openFirewall = true;
-      localNetworkGameTransfers.openFirewall = true;
+      enable = haveDGPU;
+      remotePlay.openFirewall = haveDGPU;
+      localNetworkGameTransfers.openFirewall = haveDGPU;
     };
   };
 
@@ -141,7 +142,7 @@ in
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     kakoune
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    vim
     wget
     curl
     lact
