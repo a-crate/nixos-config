@@ -1,6 +1,6 @@
 all: result
 
-result: $(shell find $(SRCDIR) -name '*.nix' -type f)
+result: $(shell find $(SRC_DIRS) -name '*.nix' -type f)
 	nix-build '<nixpkgs/nixos>' -A config.system.build.toplevel -I nixos-config=./configuration.nix
 
 # Link hardware-configuration.nix and machine.nix to system files for building
