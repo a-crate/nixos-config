@@ -134,6 +134,7 @@ in
       pulseaudio
       discord
       kanshi
+      any-nix-shell
     ];
   };
 
