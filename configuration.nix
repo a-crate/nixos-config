@@ -3,6 +3,9 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 { config, lib, pkgs, ... }:
 let
+  pkgs = import <nixpkgs> {
+    config = import ./pkgs;
+  };
   # Machine identity information (hostname, hostid, machine-specific configuration)
   machine = import ./machine.nix;
   haveNvidiaGPU = builtins.elem "nvidia" machine.gpu;
@@ -90,7 +93,7 @@ in
     fish.enable = true;
     thunar = {
       enable = true;
-      plugins = with pkgs.xfce; [ thunar-archive-plugin thunar-volman ]; 
+      plugins = with pkgs.xfce; [ thunar-archive-plugin thunar-volman ];
     };
     xfconf.enable = true;
     sway.enable = true;
