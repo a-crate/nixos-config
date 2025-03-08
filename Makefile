@@ -1,7 +1,7 @@
 all: result
 
 result: $(shell find $(SRC_DIRS) -name '*.nix' -type f)
-	nix-build '<nixpkgs/nixos>' -A config.system.build.toplevel -I nixos-config=./configuration.nix
+	nix-build ${NIX_ARGS} '<nixpkgs/nixos>' -A config.system.build.toplevel -I nixos-config=./configuration.nix
 
 # Link hardware-configuration.nix and machine.nix to system files for building
 local-links: local-hardware-configuration.nix local-machine.nix
