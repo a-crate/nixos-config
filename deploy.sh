@@ -29,5 +29,5 @@ cp -r pkgs /etc/nixos/pkgs
 
 chown -R root:root /etc/nixos/
 chmod 644 /etc/nixos/*.nix
-chmod 644 /etc/nixos/pkgs
+chmod 755 /etc/nixos/pkgs
 chmod 644 /etc/nixos/pkgs/*.nix
